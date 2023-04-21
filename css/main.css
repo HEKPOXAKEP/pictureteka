@@ -1,0 +1,121 @@
+@charset "utf-8";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font: 12px Helvetica,Arial,sans-serif;
+  width: 100%;
+  /*min-height: 100vh;*/
+  /*background-image: url(../img/bkg-old-paper-02.jpg);
+  background-size: 100%;*/
+  background-color: black;
+  /*  quotes: "«" "»";*/
+  quotes: '\275D' '\275E';
+}
+
+/* Стиль для текста в кавычках */
+q {
+  font-family: DejaVu Sans Mono, Liberation Mono, Fira Mono, monospace;
+  font-style: italic;
+  font-weight: bold;
+}
+
+q::before {
+  /*font-size: 18px;*/
+  content: open-quote;
+  color: navy;
+}
+
+q::after {
+  /*font-size: 18px;*/
+  content: close-quote;
+  color: navy;
+}
+
+/* Убираем рамки и промежутки для таблиц */
+table {
+  border: 0;
+  border-spacing: 0 0;
+  /*border-collapse: collapse; || separate;*/
+  padding: 0;
+}
+
+td {
+  padding: 0;
+}
+
+/* --- ===================== --- */
+
+#mainHeader {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: start;
+  /* --- */
+  margin: 2px 0 1px 0;
+  width: 100%;
+  background: url(../img/logo-bkg-01.jpg) repeat-x;
+}
+
+#mainHeader img {
+  display: inline-block;
+}
+
+#mainHeader .main-title-block {
+  display: inline-block;
+  /*vertical-align: top;*/
+  margin-left: 24px;
+  /*border-image: linear-gradient(#f6b73c, #4d9f0c) 30;*/
+  /*border: 9px solid gray;
+  border-image: url(../img/nebesa-border.jpg) 9;*/
+}
+
+#mainHeader .main-title-char {
+  position: relative;
+  top: 8px;
+  line-height: normal;
+  font-size: 48px;
+  font-weight: bold;
+  color: blue;
+  text-shadow: 4px 4px 3px black;
+  padding: 0 5px;
+  border: 8px solid gray;
+  border-image: url(../img/-/nebesa-border.jpg) 8;
+}
+
+#mainHeader .main-title {
+  line-height: normal;
+  font-size: 48px;
+  font-weight: bold;
+  text-shadow: 4px 4px 3px black;
+  /*color: #ffd6d3;*/
+  color: blue;
+}
+
+#mainHeader .main-subtitle {
+  line-height: 1rem;
+  font-size: 14px;
+  color: white;
+  border-left: 1px solid blue;
+  margin-left: 3px;
+  padding-left: 5px;
+}
+
+/* ---===--- */
+
+#mainToolbar {
+  background: url(../img/logo-bkg-01.jpg) repeat-x;
+}
+
+/* ---===--- */
+
+.bordered {
+  display: inline-block;
+  font: 18px cursive;
+  color: white;
+  line-height: 1rem;
+  border: 29px solid white;
+  border-image: url(../img/-/css_border-image-1.png) 29 round;
+}

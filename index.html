@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <title>Title</title>
+  <!-- jQuery -->
+  <script src='../jq/jquery-3.6.3.min.js'></script>
+  <link href='../jq/ui/jquery-ui.css' rel='stylesheet'>
+  <script src='../jq/ui/jquery-ui.min.js'></script>
+  <!-- Модули бибилитеки Ls-www-Lib -->
+  <script src='../ls-www-lib/ls-www-common.js'></script>
+  <script src='../ls-www-lib/css-control.js'></script>
+  <script src='../ls-www-lib/ui/toolBar/toolBar.js'></script>
+  <!-- === -->
+  <link href='css/main.css' rel='stylesheet'>
+  <link href='css/toolbar-flex.css' rel='stylesheet'>
+
+  <script src='js/main-data.js'></script>
+  <script src='js/main.js'></script>
+  <!-- старт-ап скрипт -->
+  <script>
+    $(document).ready(function() {
+      bootstrap();
+    });
+  </script>
+</head>
+<body>
+  <div id='mainHeader'>
+    <img src='img/logo-01.jpg'>
+    <div class='main-title-block'>
+      <div class='main-title'>Пикчетека&trade;</div>
+      <div class='main-subtitle'>персональная галерея изображений</div>
+    </div>
+  </div>
+  <div id='mainToolbar'></div>
+  <div id='mainContent'>
+    <div class='bordered'>Это должно быть в рамке<br>но почему-то без...</div>
+  </div>
+</body>
+</html>
