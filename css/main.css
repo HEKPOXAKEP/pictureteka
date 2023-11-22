@@ -96,6 +96,7 @@ td {
 
 #mainHeader .main-subtitle {
   line-height: 1rem;
+  font-family: 'HeliosExtC';
   font-size: 14px;
   color: white;
   border-left: 1px solid blue;
