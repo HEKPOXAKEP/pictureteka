@@ -3,26 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <title>Title</title>
+  <title>Пикчетека&trade;</title>
   <!-- jQuery -->
   <script src='../jq/jquery-3.6.3.min.js'></script>
   <link href='../jq/ui/jquery-ui.css' rel='stylesheet'>
   <script src='../jq/ui/jquery-ui.min.js'></script>
   <!-- Модули бибилитеки Ls-www-Lib -->
   <script src='../ls-www-lib/ls-www-common.js'></script>
-  <script src='../ls-www-lib/css-control.js'></script>
-  <script src='../ls-www-lib/ui/toolBar/toolBar.js'></script>
+  <script src='../ls-www-lib/mod-control.js'></script>
+  <script src='../ls-www-lib/ui/Toolbar/Toolbar.js'></script>
+  <script src='../ls-www-lib/ui/Toolbar/ToolbarControl.js'></script>
+  <link href='../ls-www-lib/ui/Toolbar/Toolbar.css' rel='stylesheet'>
   <!-- === -->
   <link href='css/main.css' rel='stylesheet'>
-  <link href='css/toolbar-flex.css' rel='stylesheet'>
+  <!--link href='css/toolbar-flex.css' rel='stylesheet'-->
 
   <script src='js/main-data.js'></script>
+  <script src='js/App.js'></script>
   <script src='js/main.js'></script>
   <!-- старт-ап скрипт -->
   <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded',(ev) => {
       bootstrap();
     });
+    /*$(document).ready(function() {
+      bootstrap();
+    });*/
   </script>
 </head>
 <body>
@@ -33,9 +39,9 @@
       <div class='main-subtitle'>персональная галерея изображений</div>
     </div>
   </div>
-  <div id='mainToolbar'></div>
+  <div id='mainToolbar' class='toolbar'></div>
   <div id='mainContent'>
-    <div class='bordered'>Это должно быть в рамке<br>но почему-то без...</div>
+    <!--div class='bordered'>Это должно быть в рамке<br>в красивой рамке...</div-->
   </div>
 </body>
 </html>
