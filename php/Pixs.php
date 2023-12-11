@@ -5,10 +5,14 @@
   ============================
 */
 
-namespace pictures;
+//namespace pictures;
 
 class BasePicture {
-  public function __construct(private string $fName) {
+
+  protected string $fName;
+
+  public function __construct(string $fName) {
+    $this->setFName($fName);
   }
 
   public function getFName() {
@@ -16,7 +20,7 @@ class BasePicture {
   }
 
   public function setFName(string $fName) {
-    $this->fName = $fName;
+    $this->fName=$fName;
   }
 }
 
