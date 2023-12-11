@@ -5,10 +5,16 @@
   ===================================
 */
 trait  confData {
-  public string $galFName;    // имя файла описания галерей; def: Gallery.conf.php
-  public int $galIdx;         // индекс текущей галереи в файле $this->gaFName
-  public int $pgNum;          // номер текущей страницы
-  public int $thSize;         // размер миниатюры
-  public int $perPage;        // к-во миниатюр на страницу
+  public array $galleries=[
+    'Выберите файл описания залов',
+    'Gallery.conf.php',
+    '__Gallery.conf.php'
+  ];
+  public int $galIdx;       // индекс текущего элемента в списке файлов галерей $this->galleries [gi]
+  public string $galFName;  // имя файла описания залов; def: Gallery.conf.php [gf]
+  public int $hallIdx;      // индекс текущего зала в файле $this->gaFName [hi]
+  public int $pgNum;        // номер текущей страницы [pg]
+  public int $thSize;       // размер миниатюры [sz]
+  public int $perPage;      // к-во миниатюр на страницу [pp]
 }
 ?>

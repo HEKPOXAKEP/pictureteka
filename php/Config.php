@@ -11,8 +11,9 @@ class Config {
 
   public function __construct() {
     // заполняем данные из _COOKIE
-    $this->galFName = $_COOKIE['gf'] ?? 'Gallery.conf.php';
     $this->galIdx = $_COOKIE['gi'] ?? 1;
+    $this->galFName = $_COOKIE['gf'] ?? 'Gallery.conf.php';  // then remove (?)
+    $this->hallIdx = $_COOKIE['hi'] ?? 1;
     $this->pgNum = $_COOKIE['pg'] ?? 1;
     $this->thSize = $_COOKIE['sz'] ?? 80;
     $this->perPage = $_COOKIE['pp'] ?? 30;
@@ -24,6 +25,8 @@ class Config {
   public function getConfData($asJson=false) {
     $a=[
       'err'=>0, 'msg'=>'Ok',
+      'gallery-idx'=>$this->galIdx,
+      'select-hall'=>$this->galleries,
       'edit-galfname'=>$this->galFName,
       'edit-thsize'=>$this->thSize,
       'edit-perpage'=>$this->perPage,

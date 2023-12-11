@@ -132,9 +132,7 @@ class MainToolbar extends Toolbar {
 
     if (!ok) return false;
 
-    document.getElementById('edit-galfname').value=cfgData['edit-galfname'];
-    document.getElementById('edit-thsize').value=cfgData['edit-thsize'];
-    document.getElementById('edit-perpage').value=cfgData['edit-perpage'];
+    this.dlgSettingsFillData(cfgData);
 
     $('#dlg').dialog({
       title: 'Настройки',
@@ -153,10 +151,34 @@ class MainToolbar extends Toolbar {
   }
 
   /*
+    Заполняем дилог настроек данными
+  */
+  dlgSettingsFillData(cfgData) {
+    var
+      sel=document.getElementById('select-gallery'),
+      op;
+
+    ///document.getElementById('edit-galfname').value=cfgData['edit-galfname'];
+    cfgData['select-hall'].forEach((val,idx) => {
+      op=document.createElement('option');
+      op.value=idx;
+      op.textContent=val;
+      if (idx ===0) op.disabled=true;
+      sel.appendChild(op);
+    });
+    sel.value=cfgData['gallery-idx'];
+
+    document.getElementById('edit-thsize').value=cfgData['edit-thsize'];
+    document.getElementById('edit-perpage').value=cfgData['edit-perpage'];
+  }
+
+  /*
     По кнопке Ok диалога настроек
   */
   dlgSettingsOk() {
-    setCookie('gf',document.getElementById('edit-galfname').value);
+    ///setCookie('gf',document.getElementById('edit-galfname').value);
+    setCookie('gi',document.getElementById('select-gallery').value);
+    setCookie('gf',document.getElementById('select-gallery').selectedOptions[0].text);
     setCookie('sz',document.getElementById('edit-thsize').value);
     setCookie('pp',document.getElementById('edit-perpage').value);
 
