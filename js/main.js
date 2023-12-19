@@ -3,42 +3,20 @@
 */
 
 function bootstrap() {
+  checkDependencies();
   app=new App();
 }
 
-function emptyDlg(dlgId) {
-  $(dlgId).empty();
-}
+function checkDependencies() {
+  var
+    dep=[];
 
-function closeDlg(dlgId,emptyIt=true) {
-  $(dlgId).dialog('destroy');
-  if (emptyIt) emptyDlg(dlgId);
-}
+  if (typeof $ =='undefined') dep.push('jQuery');
+  if (typeof ModCtrl =='undefined') dep.push('mod-control');
+  if (typeof JqUIDlgCtrl =='undefined') dep.push('JqUIDlgCtrl');
+  if (typeof Toolbar =='undefined') dep.push('Toolbar');
+  if (typeof ToolbarCtrl =='undefined') dep.push('ToolbarCtrl');
 
-/*
-  Подготовка информационного диалога.
-  dlgType: error, warn, info
-*/
-function setupCustomDlg(dlgType) {
-  const
-    dlg=document.getElementById('msg-dlg');
-
-  dlg.className=dlgType;
-  dlg.innerHTML='';
-
-  return dlg;
-}
-
-function showCustomDlg(dlgType,msg,title) {
-  setupCustomDlg(dlgType).innerHTML=msg;
-
-  $('#msg-dlg').dialog({
-    'title': title ?? dlgType,
-    resizable: false,
-    modal: true,
-    width: 'auto',
-    buttons: [
-      {text: 'Ok', click: () => closeDlg('#msg-dlg')},
-    ]
-  });
+  if (dep.length >0)
+    alert('Не загружены основные модули:\n\n'+dep.toString()+'\n\nНормальная работа программы невозможна.');
 }
