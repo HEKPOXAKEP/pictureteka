@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+  <link rel="icon" type="image/x-icon" href="img/favicon-01.ico">
   <!-- Теги с директивами "не кешировать" для браузера и "узлов" веб-сети -->
   <!--meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="pragma" content="no-cache" />
@@ -18,8 +18,10 @@
   <!-- модули бибилитеки Ls-www-Lib -->
   <script src='../ls-www-lib/ls-www-common.js'></script>
   <script src='../ls-www-lib/mod-control.js'></script>
+  <script src='../ls-www-lib/ui/JqUIDialogs/JqUIDlgCtrl.js'></script>
   <script src='../ls-www-lib/ui/Toolbar/Toolbar.js'></script>
   <script src='../ls-www-lib/ui/Toolbar/ToolbarControl.js'></script>
+  <link href='../ls-www-lib/ui/JqUIDialogs/JqUIDialogs.css' rel='stylesheet'>
   <link href='../ls-www-lib/ui/Toolbar/Toolbar.css' rel='stylesheet'>
   <!-- модули проекта -->
   <link href='css/general.css' rel='stylesheet'>
@@ -42,7 +44,6 @@
     <img src='img/logo-01.jpg'>
     <div class='main-title-block'>
       <div class='main-title'>Пикчетека&trade;</div>
-      <!--div class='border-frame-3'><div>П</div><div>и</div><div>к</div><div>ч</div><div>е</div><div>т</div><div>е</div><div>к</div><div>а</div></div-->
       <div class='main-subtitle'>персональная галерея изображений</div>
     </div>
   </div>
@@ -52,7 +53,6 @@
     <div class='border-frame-6'>Это должно быть в рамке<br>в красивой рамке...<br>и вот ещё третья строка</div>
     <div class='border-frame-3'>Это должно быть в рамке<br>в красивой рамке...<br>и вот ещё третья строка</div-->
   </div>
-  <div id='dlg'></div>
-  <div id='msg-dlg'></div>
+  <div id='dialogs'></div>
 </body>
 </html>

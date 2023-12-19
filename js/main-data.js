@@ -5,7 +5,6 @@
 */
 const
   // режим отладки
-  _dbg_=true,
   _log=console.log,
   _warn=console.warn,
   _info=console.info;
@@ -14,4 +13,5 @@ const
 var
   app=null,
   modCtrl=new ModCtrl(),
+  dlgCtrl=new JqUIDlgCtrl('dialogs',modCtrl),
   toolbarCtrl=new ToolbarCtrl();

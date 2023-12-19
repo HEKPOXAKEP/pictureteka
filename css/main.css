@@ -62,31 +62,6 @@
   background: url(../img/logo-bkg-01.jpg) repeat-x;
 }
 
-/* ---===--- */
-
-#dlg,#msg-dlg {
-  display: none;
-}
-
-#msg-dlg {
-  margin: 7px 7px 0 7px;
-  font-size: 14px;
-  border: 1px solid gray;
-  border-radius: 4px;
-}
-
-#msg-dlg.error {
-  background-color: #ffcfcf;
-}
-
-#msg-dlg.warn {
-  background-color: lightyellow;
-}
-
-#msg-dlg.info {
-  background-color: aliceblue;
-}
-
 .no-outline {
   outline: none;
 }
