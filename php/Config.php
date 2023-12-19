@@ -26,7 +26,7 @@ class Config {
     $a=[
       'err'=>0, 'msg'=>'Ok',
       'gallery-idx'=>$this->galIdx,
-      'select-hall'=>$this->galleries,
+      'select-gallery'=>$this->galleries,
       'edit-galfname'=>$this->galFName,
       'edit-thsize'=>$this->thSize,
       'edit-perpage'=>$this->perPage,
