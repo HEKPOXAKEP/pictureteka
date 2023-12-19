@@ -38,22 +38,20 @@ class MainToolbar extends Toolbar {
   }
 
   btnSelectHallClick(ev) {
-    $('#dlg').load(
-      'html/DlgSelectHall.html',
-      (respText,txtStatus,xhr) => {
-        if (txtStatus =='error')
-          showCustomDlg(
-            'error',
-            `Ошибка загрузки html/DlgSelectHall.html:<br>${xhr.status} : ${xhr.statusText}`,
-            'Ошибка!');
-        else
-          this.execSelectHallDlg();
-      }
-    ); //.load
+    dlgCtrl.showCustomDlg(
+      'dlg-select-hall',
+      {
+        oHtml: {url: 'html/DlgSelectHall.html'},
+        oJs: {src: 'js/DlgSelectHall.js'}
+      },
+      'Выбор зала',
+      null,
+      (dlg,opts) => new DlgSelectHall(dlg,opts)
+    );
   } //btnSelectHallClick
 
   btnTrashcanClick(ev) {
-    showCustomDlg(
+    dlgCtrl.showDlg(
       'warn',
       `<p style='font-size: 18px'><b>Todo: </b>Будем удалять в специальную галерею "Отстойник" (Sump).</p>`+
       `<p style='font-style: italic'>Не забыть её добавить в Galleries.conf.php.</p>`,
@@ -62,11 +60,16 @@ class MainToolbar extends Toolbar {
   }
 
   btnHelpClick(ev) {
-    showCustomDlg(
-      'info',
-      `<p style='font-size: 18px'><b>${app.versionInfo.PID}</b></p>`+
-      `${app.versionInfo.DESCR}<br><br>Версия ${app.versionInfo.VID}<br><br>${app.versionInfo.CID}`,
-      'Эбаут');
+    dlgCtrl.showCustomDlg(
+      'dlg-about',
+      {
+        oHtml: {url: 'html/DlgAbout.html'},
+        oJs: {src: 'js/DlgAbout.js'}
+      },
+      'О проекте...',
+      null,
+      (dlg,opts) => new DlgAbout(dlg,opts)
+    );
   }
 
   btnRefreshClick(ev) {
@@ -75,178 +78,17 @@ class MainToolbar extends Toolbar {
   }
 
   btnSettingsClick(ev) {
-    emptyDlg('#dlg');
-
-    $('#dlg').load(
-      'html/DlgConfig.html',
-      (respText,txtStatus,xhr) => {
-        if (txtStatus =='error')
-          showCustomDlg(
-            'error',
-            `Ошибка загрузки html/DlgConfig.html:<br>${xhr.status} : ${xhr.statusText}`,
-            'Ошибка!');
-        else
-          this.execSettingsDlg();
-      }
-    ); //.load
+    dlgCtrl.showCustomDlg(
+      'dlg-settings',
+      {
+        oHtml: {url: 'html/DlgSettings.html'},
+        oJs: {src: 'js/DlgSettings.js'}
+      },
+      'Настройки',
+      null,
+      (dlg,opts) => new DlgSettings(dlg,opts)
+    );
   } // btnSettingsClick
-
-  /*
-    Отображение диалога настроек
-  */
-  async execSettingsDlg() {
-    var
-      ok=false,
-      cfgData;
-
-    const
-      resp=await fetch(
-      'php/ConfigMgr.php?op=get',{
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json'
-        },
-      });
-    ///_log(resp);  //dbg
-    if (!resp.ok) {
-      showCustomDlg(
-        'error',
-        `<p><b>Загрузка параметров конфигурации обломалась.</b></p><br><p><b>URL: </b>${resp.url}</p><p><b>Статус: </b>${resp.status}&nbsp;${resp.statusText}</p>`,
-        'Ошибка!');
-    } else {
-      const
-        r=resp.clone();
-      try {
-        cfgData = await resp.json();
-        if (cfgData['err']) {
-          showCustomDlg('error',cfgData['msg'],'Ошибка');
-        } else {
-          ok=true;
-        }
-        ///_info('got: ', cfgData); //dbg
-      } catch (e) {
-        showCustomDlg('error',await r.text(),'Ошибка!');
-      }
-    }
-
-    if (!ok) return false;
-
-    this.dlgSettingsFillData(cfgData);
-
-    $('#dlg').dialog({
-      title: 'Настройки',
-      resizable: false,
-      modal: true,
-      width: 'auto',
-      buttons: [
-        {text: 'Ok', click: () =>
-          this.dlgSettingsOk()
-        },
-        {text: 'Отмена', click: () =>
-          closeDlg('#dlg')
-        }
-      ]
-    });
-  }
-
-  /*
-    Заполняем дилог настроек данными
-  */
-  dlgSettingsFillData(cfgData) {
-    var
-      sel=document.getElementById('select-gallery'),
-      op;
-
-    ///document.getElementById('edit-galfname').value=cfgData['edit-galfname'];
-    cfgData['select-hall'].forEach((val,idx) => {
-      op=document.createElement('option');
-      op.value=idx;
-      op.textContent=val;
-      if (idx ===0) op.disabled=true;
-      sel.appendChild(op);
-    });
-    sel.value=cfgData['gallery-idx'];
-
-    document.getElementById('edit-thsize').value=cfgData['edit-thsize'];
-    document.getElementById('edit-perpage').value=cfgData['edit-perpage'];
-  }
-
-  /*
-    По кнопке Ok диалога настроек
-  */
-  dlgSettingsOk() {
-    ///setCookie('gf',document.getElementById('edit-galfname').value);
-    setCookie('gi',document.getElementById('select-gallery').value);
-    setCookie('gf',document.getElementById('select-gallery').selectedOptions[0].text);
-    setCookie('sz',document.getElementById('edit-thsize').value);
-    setCookie('pp',document.getElementById('edit-perpage').value);
-
-    closeDlg('#dlg');
-  }
-
-  /*
-    Отображение диалога выбора зала
-  */
-  async execSelectHallDlg() {
-    var
-      ok,
-      halls;
-
-    const
-      resp=await fetch(
-      'php/GetHallsList.php?op=get',{
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json'
-        },
-      });
-    ///_log(resp);  //dbg
-
-    if (!resp.ok) {
-      showCustomDlg(
-        'error',
-        `<p><b>Загрузка списка залов провалилась.</b></p><br>`+
-        `<p><b>URL: </b>${resp.url}</p><p><b>Статус: </b>${resp.status}&nbsp;${resp.statusText}</p>`,
-        'Ошибка!');
-    } else {
-      const
-        r=resp.clone();
-      try {
-        halls = await resp.json();
-        if (halls['err']) {
-          showCustomDlg('error',halls['msg'],'Ошибка');
-        } else {
-          ok=true;
-        }
-        ///_info('got: ', halls); //dbg
-      } catch (e) {
-        showCustomDlg('error',await r.text(),'Ошибка!');
-      }
-    }
-
-    if (!ok) return false;
-
-    $('#dlg').dialog({
-      title: 'Выберите зал',
-      resizable: false,
-      modal: true,
-      width: 'auto',
-      buttons: [
-        {text: 'Ok', click: () =>
-            this.dlgSelectHallOk()
-        },
-        {text: 'Отмена', click: () =>
-            closeDlg('#dlg')
-        }
-      ]
-    });
-  }
-
-  dlgSelectHallOk() {
-    closeDlg('#dlg');
-  }
 }
 
 /* --- Инициализация тулбара --- */
