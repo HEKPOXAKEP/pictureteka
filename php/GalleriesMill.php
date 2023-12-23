@@ -16,8 +16,14 @@ class GalleriesMill
   /*
     Дабавляет конечный слэш к пути, если его там нет
   */
-  static function addTrailingSlash($s) {
+  static function addTrailingSlash(string $s): string {
     return (mb_substr($s,-1)=="\\" || mb_substr($s,-1)=='/') ? $s : $s.DIRECTORY_SEPARATOR;
+  }
+  /*
+    Удаляет уонечные слэши из пути
+  */
+  static function delTrailingSlash(string $s): string {
+    return rtrim($s,'/\\');
   }
 
   public function __construct(?Config $cfg) {
@@ -57,6 +63,7 @@ class GalleriesMill
     );
 
     // сначала добавляем сам зал
+    $gal['subhall']=false;
     if (count($this->rez) ==0)
       $this->rez[1]=$gal;
     else
@@ -75,8 +82,8 @@ class GalleriesMill
         $ap=explode(DIRECTORY_SEPARATOR,$path);
         $path=GalleriesMill::addTrailingSlash($path);
 
-        $descr='';
         $name='';
+        $descr='';
 
         if (file_exists($path.'pictureteka.info')) {
           // если есть в каталоге подзала файл pictureteka.info,
@@ -86,13 +93,13 @@ class GalleriesMill
 
           if (isset($pi['ignore']) && $pi['ignore']) continue;
 
-          $descr=isset($pi['descr']) ? $pi['descr'] : '';
           $name=isset($pi['name']) ? $pi['name'] : '';
+          $descr=isset($pi['descr']) ? $pi['descr'] : '';
         }
 
         $this->rez[]=[
           'id'=>'subhall-'.end($ap),
-          'name'=>($name=='') ? mb_substr($path,mb_strlen($gal['path'])) : $name,
+          'name'=>($name=='') ? GalleriesMill::delTrailingSlash(mb_substr($path,mb_strlen($gal['path']))) : $name,
           'descr'=>$descr,
           'path'=>$path,
           'subhall'=>true,
