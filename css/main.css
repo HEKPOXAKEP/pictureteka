@@ -56,14 +56,33 @@
   padding-left: 5px;
 }
 
-/* ---===--- */
+/* Toolbar's styles */
 
 #mainToolbar {
   background: url(../img/logo-bkg-01.jpg) repeat-x;
 }
 
+.toolbar-btn {
+  width: 64px;
+  height: 64px;
+  background: url(../img/tool-btn-bkg-64.jpg);
+}
+
+.toolbar-btn>img {
+  background-color: silver;
+  width: 46px;
+  height: 46px;
+  border-radius: 5px;
+}
+
+/* Auxiliary styles */
+
 .no-outline {
   outline: none;
+}
+
+.el-hidden {
+  visibility: hidden;
 }
 
 /* --- === ================================ === --- */
