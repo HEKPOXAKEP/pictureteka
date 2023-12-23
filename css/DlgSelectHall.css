@@ -1,0 +1,33 @@
+/*
+  Стили диалога выбора зала
+*/
+
+.hall-div {
+  margin: 5px 10px;
+}
+
+.hall-div label {
+  font-weight: bold;
+}
+
+.hall-div:hover {
+  background-color: #e9e9ea;
+}
+
+.hall-div .btn-info {
+  float: right;
+  height: 1.5em;
+  margin-top: 0;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.hall-div .btn-info:hover {
+  background-color: white;
+}
+
+.hall-div .hall-info {
+  display: none;
+  border-top: 1px dashed gray;
+  border-bottom: 1px solid gray;
+}
