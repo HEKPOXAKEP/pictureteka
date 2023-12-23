@@ -1,18 +1,17 @@
-<!--
-`<p style='font-size: 18px'><b>${app.versionInfo.PID}</b></p>`+
-`${app.versionInfo.DESCR}<br><br>Версия ${app.versionInfo.VID}<br><br>${app.versionInfo.CID}`,
--->
-<div style='display: flex'>
-  <img src='img/joconda-about.jpg' style='box-shadow: 5px 5px 10px 0px rgba(0,0,0,0.5); margin: 0 20px 7px 0' alt='ABOUT'>
-  <!--div style='display: flex; width: 19px; justify-content: center;'><div style='width: 2px; border-right: 1px solid gray'></div></div-->
-  <div style='display: flex; flex-direction: column; justify-content: space-between'>
+<!-- Диалог "О проекте" -->
+<div id='dlg-about-frame'>
+  <img src='img/joconda-about.jpg' id='about-logo-img' alt='ABOUT'>
+  <div id='text-about-frame'>
     <div>
-      <div id='about-PID' style='font-size: 20px; font-weight: bold;'></div>
+      <div id='about-PID'></div>
       <div id='about-DESCR'></div>
     </div>
-    <div style='margin-bottom: 7px'>
+    <div style='margin-bottom: 3px'>
       <div id='about-VID'></div>
       <div id='about-CID'></div>
+      <div id='about-poweredby'>Powered by:</div>
+      <img src='img/vanillajs-01.png' style='margin-left: 12px'>&nbsp;<img src='img/jquery-03.jpg'><br>
+      <img src='img/jqueryui-01.png' style='margin-left: 12px'>&nbsp;<img src='img/LAGODROM-logo-01.jpg'>
     </div>
   </div>
 </div>
