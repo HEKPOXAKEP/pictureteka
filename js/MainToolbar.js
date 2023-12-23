@@ -41,6 +41,7 @@ class MainToolbar extends Toolbar {
     dlgCtrl.showCustomDlg(
       'dlg-select-hall',
       {
+        oCss: {href: 'css/DlgSelectHall.css'},
         oHtml: {url: 'html/DlgSelectHall.html'},
         oJs: {src: 'js/DlgSelectHall.js'}
       },
@@ -63,6 +64,7 @@ class MainToolbar extends Toolbar {
     dlgCtrl.showCustomDlg(
       'dlg-about',
       {
+        oCss: {href: 'css/DlgAbout.css'},
         oHtml: {url: 'html/DlgAbout.html'},
         oJs: {src: 'js/DlgAbout.js'}
       },
