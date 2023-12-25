@@ -12,7 +12,9 @@ class DlgSelectHall
   setupEvents(opts) {
     this.boundBtnOkClick=this.btnOkClick.bind(this);
     this.boundBtnCancelClick=this.btnCancelClick.bind(this);
-    this.boundBtnDescrClick=this.btnDescrClick.bind(this);
+    this.boundBtnInfoClick=this.btnInfoClick.bind(this);
+    this.boundBtnEditInfoClick=this.btnEditInfoClick.bind(this);
+    this.boundLoadThumb=this.loadThumb.bind(this);
 
     opts.buttons=[
       {text: 'Ok', click: this.boundBtnOkClick},
@@ -67,18 +69,13 @@ class DlgSelectHall
   }
 
   /*
-    @param {array} halls
+    Заполняем список залов
   */
   fillDlgData(halls) {
     var
       hh=[],
-      hallIdx=getCookie('hi'),
+      hallIdx=app.hallIdx,
       elHalls=document.getElementById('halls-list');
-
-    if (!hallIdx) {
-      hallIdx=1;
-      setCookie('hi',1);
-    }
 
     elHalls.tabIndex=-1;
 
@@ -97,14 +94,19 @@ class DlgSelectHall
     const
       h=document.createElement('div'),
       r=this.createHallRadio(idx,hallIdx),
-      l=this.createHallLabel(hall,r.id),
+      l=this.createHallLabel(hall,idx,r.id),
       d=this.createHallDescr(hall,idx),
-      b=this.createHallBtn(idx);
+      b=this.createHallInfoBtn(idx);
 
     h.id='hall-'+idx.toString();
     h.classList.add('hall-div');
-    if (hall['subhall']) h.classList.add('subhall');
-    h.append(r,l,b,d);
+
+    if (hall['subhall']) {
+      h.classList.add('subhall');
+      h.append(r,l,b,this.createEditHallInfoBtn(idx),d);
+    } else {
+      h.append(r, l, b, d);
+    }
 
     return h;
   }
@@ -122,34 +124,65 @@ class DlgSelectHall
     return r;
   }
 
-  createHallLabel(hall,forId) {
+  createHallLabel(hall,idx,forId) {
     var
       l=document.createElement('label');
 
+    l.id='lbl-hall-name-'+idx.toString();
     l.setAttribute('for',forId);
-    l.innerHTML=(hall['subhall'] ? '&nbsp;&nbsp;' : '')+'&nbsp;&nbsp;&nbsp;'+hall['name'];
+    if (hall['subhall']) l.classList.add('lbl-subhall');
+    l.innerHTML=hall['name'];
 
     return l;
   }
 
-  createHallBtn(idx) {
+  createHallInfoBtn(idx) {
     var
       b=document.createElement('span');
 
     b.id='btn-info-'+idx.toString();
     b.classList.add('btn-info');
-    b.innerHTML='&#9668;';
+    b.innerHTML='&#9658;';
+
+    return b;
+  }
+
+  createEditHallInfoBtn(idx) {
+    var
+      b=document.createElement('span');
+
+    b.id='btn-edit-info-'+idx.toString();
+    b.classList.add('btn-edit-info');
+    b.innerHTML='&#9998;';
 
     return b;
   }
 
   createHallDescr(hall,idx) {
-    var
-      d=document.createElement('div');
+    const
+      d=document.createElement('div'),
+      dimg=document.createElement('img'),
+      dtxt=document.createElement('div');
 
     d.id=`info-${idx}`;
     d.classList.add('hall-info');
-    d.innerHTML=`<p>${hall['descr']}</p><p>${hall['path']}</p>`;
+
+    dimg.id=`hall-thumb-${idx}`;
+    dimg.classList.add('hall-thumb');
+    dimg.loading='lazy';
+    //dimg.addEventListener('load',this.boundLoadThumb);
+    if (hall['thumb']) {
+      dimg.alt=hall['thumb'];
+      dimg.src='php/GetHallThumb.php?th='+encodeURI(hall['path'] + hall['thumb']);
+    } else {
+      dimg.alt='';
+      dimg.src='';
+    }
+
+    dtxt.classList.add('hall-info-txt');
+    dtxt.innerHTML=`<div id='hall-descr-${idx}'>${hall['descr']}</div><div id='hall-path-${idx}'>${hall['path']}</div>`;
+
+    d.append(dimg,dtxt)
 
     return d;
   }
@@ -159,10 +192,21 @@ class DlgSelectHall
       btns=document.querySelectorAll('#halls-list .btn-info');
 
     Array.from(btns).forEach((btn) =>
-      btn.addEventListener('click',this.boundBtnDescrClick));
+      btn.addEventListener('click',this.boundBtnInfoClick));
+
+    btns=document.querySelectorAll('#halls-list .btn-edit-info');
+
+    Array.from(btns).forEach((btn) =>
+      btn.addEventListener('click',this.boundBtnEditInfoClick));
   }
 
-  btnDescrClick(ev) {
+  loadThumb(ev) {
+    //ev.stopImmediatePropagation();
+    //ev.preventDefault();
+    _log(ev);
+  }
+
+  btnInfoClick(ev) {
     ev.preventDefault();
 
     const
@@ -177,9 +221,28 @@ class DlgSelectHall
     }  else {
       // hide
       d.style.display='none';
-      ev.target.innerHTML='&#9668;';
+      ev.target.innerHTML='&#9658;';
     }
   }
+
+  btnEditInfoClick(ev) {
+    ev.preventDefault();
+
+    const
+      a=ev.target.id.split('-');
+
+    dlgCtrl.showCustomDlg(
+      'dlg-edit-hall-info',
+      {
+        oCss: {href: 'css/DlgEditHallInfo.css'},
+        oHtml: {url: 'html/DlgEditHallInfo.html'},
+        oJs: {src: 'js/DlgEditHallInfo.js'}
+      },
+      'Информация о зале',
+      null,
+      (dlg,opts) => new DlgEditHallInfo(dlg,opts,a.slice(-1))
+    );
+  } //btnEditInfoClick
 
   btnOkClick(ev) {
     //dlgCtrl.destroyDlg(this.dlg);
