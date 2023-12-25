@@ -13,7 +13,15 @@ class App {
     this.initToolbar();
   }
 
+  /*
+    Инициализация глобальных данных
+  */
   initGlobals() {
+    this.hallIdx=getCookie('hi');
+    if (!this.hallIdx) {
+      this.hallIdx=1;
+      setCookie('hi',1);
+    }
   }
 
   /*
@@ -21,18 +29,18 @@ class App {
   */
   loadVersionInfo() {
     fetch('VersionInfo.json')
-    .then((response) => {
-      if (response.ok)
-        return response.json();
+      .then((response) => {
+        if (response.ok)
+          return response.json();
 
-      return Promise.reject(`Ошибка загрузки VersionInfo.json: ${response.status} ${response.statusText}`);
-    })
-    .then((json) => {
-      this.versionInfo=json;
-      document.title=json.PID;
-    })
-    .catch((error) => {
-      console.error(error);
+        return Promise.reject(`Ошибка загрузки VersionInfo.json: ${response.status} ${response.statusText}`);
+      })
+      .then((json) => {
+        this.versionInfo=json;
+        document.title=json.PID;
+      })
+      .catch((error) => {
+        console.error(error);
     });
   }
 
