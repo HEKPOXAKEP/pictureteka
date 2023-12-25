@@ -1,0 +1,26 @@
+@charset "utf-8";
+/*
+  ================================================
+  Стили диалога редактирования информации о зале
+  ================================================
+*/
+#dlg-edit-hall-info label {
+  font-weight: bold;
+}
+
+#dlg-edit-hall-info #div-hall-path {
+  padding-bottom: 5px;
+  margin-bottom: 7px;
+  border-bottom: 1px dashed gray;
+}
+
+#dlg-edit-hall-info #ignore-hall-warn {
+  display: none;
+  color: red;
+  padding-left: 9px;
+  border-left: 3px solid red;
+}
+
+.param-div {
+  margin-top: 5px;
+}
