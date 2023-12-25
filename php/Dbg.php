@@ -17,6 +17,5 @@ class Dbg
   }
 }
 
-$DBG=new Dbg();
+Dbg::_log(PHP_EOL.'--- '.date('d.m.Y H:i:s'));
 ?>
-
