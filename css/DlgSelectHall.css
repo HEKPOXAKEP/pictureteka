@@ -1,33 +1,68 @@
+@charset "utf-8";
 /*
+  ===========================
   Стили диалога выбора зала
+  ===========================
 */
 
+/* Зал */
 .hall-div {
   margin: 5px 10px;
 }
 
+/* Название зала */
 .hall-div label {
   font-weight: bold;
+  margin-left: 10px;
+}
+
+.hall-div label.lbl-subhall {
+  margin-left: 15px;
+}
+
+#hall-0 label {
+  color: darkred;
 }
 
 .hall-div:hover {
   background-color: #e9e9ea;
 }
 
-.hall-div .btn-info {
+/* Кнопки Edit и Info */
+.hall-div .btn-info,.btn-edit-info {
   float: right;
-  height: 1.5em;
+  height: 1em;
   margin-top: 0;
   margin-left: 10px;
   cursor: pointer;
 }
 
-.hall-div .btn-info:hover {
-  background-color: white;
-}
-
+/* Блок информации о зале */
 .hall-div .hall-info {
   display: none;
+  margin-bottom: 7px;
   border-top: 1px dashed gray;
   border-bottom: 1px solid gray;
+}
+
+/* path и descr */
+.hall-div .hall-info-txt {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+/* Миниатюра зала.
+   Размеры синхронизировать с GalleryMill thumbSize
+*/
+.hall-div .hall-thumb {
+  display: inline-block;
+  font-size: 8px;
+  padding-top: 3px;
+  padding-left: 3px;
+  width: 64px;
+  height: 64px;
+}
+
+.hall-div .hall-thumb[src=""] {
+  display: none;
 }
