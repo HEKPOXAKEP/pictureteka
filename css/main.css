@@ -19,9 +19,6 @@
 #mainHeader .main-title-block {
   display: inline-block;
   margin-left: 24px;
-  /*border-image: linear-gradient(#f6b73c, #4d9f0c) 30;*/
-  /*border: 9px solid gray;
-  border-image: url(../img/nebesa-border.jpg) 9;*/
 }
 
 #mainHeader .main-title-char {
@@ -34,7 +31,6 @@
   text-shadow: 4px 4px 3px black;
   padding: 0 5px;
   border: 8px solid gray;
-  border-image: url(../img/-/nebesa-border.jpg) 8;
 }
 
 #mainHeader .main-title {
@@ -62,7 +58,7 @@
   background: url(../img/logo-bkg-01.jpg) repeat-x;
 }
 
-.toolbar-btn {
+/*.toolbar-btn {
   width: 64px;
   height: 64px;
   background: url(../img/tool-btn-bkg-64.jpg);
@@ -73,7 +69,7 @@
   width: 46px;
   height: 46px;
   border-radius: 5px;
-}
+}*/
 
 /* Auxiliary styles */
 
@@ -83,69 +79,4 @@
 
 .el-hidden {
   visibility: hidden;
-}
-
-/* --- === ================================ === --- */
-.beautiful-frame {
-  display: inline-block;
-  font: 18px cursive;
-  color: #371c07;
-  background-color: #f4dcae;
-  line-height: 1rem;
-  padding: 7px 9px;
-  border: 29px solid white;
-  border-image: url('../img/-/css_border-image-1.png') 29 round;
-}
-
-.border-frame-6 {
-  display: inline-block;
-  font: 18px cursive;
-  color: navy;
-  background-color: white;
-  padding: 7px 9px;
-  border-width: 42px;
-  border-image-slice: 42;
-  /*border-image-width: 42px;
-  border-image-outset: 0px;*/
-  border-image-source: url('../img/-/border-image-MDN-6.svg');
-  border-image-repeat: round;
-  border-style: solid;
-}
-
-.border-frame-3 {
-  display: inline-block;
-}
-
-.border-frame-3 * {
-  display: inline-block;
-  font-size: 32px;
-  font-weight: bold;
-  color: navy;
-  background-color: white;
-  /*margin: 7px 9px;*/
-  border-width: 10px;
-  border-image-slice: 15;
-  border-image-source: url('../img/-/border-image-MDN-3.png');
-  border-image-repeat: round;
-  border-style: solid;
-}
-
-/* --- nebogame --- */
-.border-frame-nebogame {
-  display: inline-block;
-  border-width: 32px;
-  border-image-slice: 42;
-  border-image-source: url('../img/-/nebogame-border-01.png');
-  border-image-repeat: round;
-  border-style: solid;
-}
-
-.border-frame-nebogame * {
-  font-size: 32px;
-  font-weight: bold;
-  text-shadow: 4px 4px 3px gray;
-  line-height: normal;
-  background-color: #ffe6c0;
-  color: #371c07;
-  /*margin: -30px;*/
 }
