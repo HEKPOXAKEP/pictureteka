@@ -11,5 +11,6 @@ const MSGS = array(
   'E_NoGalleryList'=>'Не задан файл списка галерей',
   'E_UnrecognizedCmd'=>'Нераспознанная команда',
   'E_NoOp'=>'Оперция не указана',
+  'E_ParamNotSpecified'=>'Не задан параметр ',
 );
 ?>
