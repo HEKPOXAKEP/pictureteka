@@ -11,5 +11,5 @@ require_once('GalleryMill.php');
 
 $mill=new GalleryMill(null);
 
-exit($mill->grindGallery(true));
+exit(json_encode($mill->loadJsonGallery()));
 ?>
