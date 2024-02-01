@@ -22,11 +22,11 @@ class Config {
   /*
     Вернёт данные в формате json для заполнения формы DlgConfig
   */
-  public function getConfData($asJson=false) {
+  public function getConfData(bool $asJson=false) {
     $a=[
       'err'=>0, 'msg'=>'Ok',
       'gallery-idx'=>$this->galIdx,
-      'select-gallery'=>$this->galleries,
+      'select-gallery'=>$this->galleries,   // список файлов описаний залов (Gallery.conf.php и т.п.)
       'edit-galfname'=>$this->galFName,
       'edit-thsize'=>$this->thSize,
       'edit-perpage'=>$this->perPage,
