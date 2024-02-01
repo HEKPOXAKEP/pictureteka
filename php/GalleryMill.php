@@ -1,61 +1,40 @@
 <?php
 /*
-  ====================================================================
-  Мельница для перемалываения Gallery.conf.php в Galleries.conf.json
-  ====================================================================
-  Так же записывает pictureteka.info и генерирует миниатюры залов
+  ========================================================
+  Мельница галереи. Главный объект.
+  ========================================================
+  - Перемалывает Gallery.conf.php в Galleries.conf.json
+  - Записывает pictureteka.info для подзалов
+  - Генерирует миниатюры залов
 */
 require_once('msgs_ru.php');
+require_once('Functions.php');
 require_once('Config.php');
+require_once('PixUtils.php');
 ///require_once('Dbg.php');  //dbg
 
 const
-  thumbSize=64,
-  PICTURETEKA_INFO='pictureteka.info';
+  thumbSize=64,                         // размер миниатюры зала по умолчанию
+  PICTURETEKA_INFO='pictureteka.info',  // имя файла параметров подзала
+
+  // типы возваращаемых данных
+  RT_NONE=0,    // return w/o param
+  RT_ARRAY=1,   // array
+  RT_JSON=2,    // json string
+
+  // индексы массива параметров getimagesize()
+  I_WIDTH=0,      // ширина
+  I_HEIGHT=1,     // высота
+  I_TYPE=2,       // константа типа изображения IMAGETYPE_XXX
+  I_SIZEATTR=3   // строка height="yyy" width="xxx"
+  ;
 
 class GalleryMill
 {
   public ?Config $cfg=null;
   public array $GALLERY;
-  public array $rez=[];  // результирующий массив: сообщение об ошибке или строка json
+  ///public array $rez=[];  // результирующий массив: сообщение об ошибке или строка json
 
-  /*
-    Дабавляет конечный слэш к пути, если его там нет
-  */
-  static function addTrailingSlash(string $s): string {
-    return (mb_substr($s,-1)=="\\" || mb_substr($s,-1)=='/') ? $s : $s.DIRECTORY_SEPARATOR;
-  }
-  /*
-    Удаляет уонечные слэши из пути
-  */
-  static function delTrailingSlash(string $s): string {
-    return rtrim($s,'/\\');
-  }
-
-  /*
-    Удаляем из массива элементы с пустым значением
-  */
-  static function removeEmptyVals(array &$a) {
-    foreach($a as $k=>$v) {
-      if (gettype($v) ==='string') {
-        $v = trim($v);
-        $a[$k] = $v;
-        if ($v === '') unset($a[$k]);
-      }
-    }
-  }
-
-  /*
-    Приводит строку к будеву типу
-  */
-  static function toBool(string $v): bool {
-    $v=strtolower(substr($v,0,5));
-
-    if ($v ==='true')
-      return true;
-    else
-      return false;
-  }
 
   /* -------------- class begins here ------------- */
 
@@ -67,41 +46,40 @@ class GalleryMill
   }
 
   /*
-    Перемалываем Gallery.conf.php -> Gallery.conf.json
+    Перемалываем Gallery.conf.php -> Gallery.conf.json.
+    Возвращает переработанный массив залов или сообщение об ошибке [err,msg].
   */
-  public function grindGallery(bool $storeJsonFile): string {
+  public function grindGallery(bool $storeJsonFile=false): array {
+    $rez=[];
+
     if (!isset($this->cfg->galFName)) {
       $s=MSGS['E_NoGalleryList'];
-      return(json_encode(array('err'=>-1971,'msg'=>$s)));
+      return(array('err'=>-1971,'msg'=>$s));
     }
 
     include_once($this->cfg->galFName);
 
     for ($i=0; $i <=array_key_last($this->GALLERY); $i++) {
       if ($this->GALLERY[$i]['visible'])
-        $this->doGrindHall($this->GALLERY[$i]);
+        $this->doGrindHall($this->GALLERY[$i],$rez);
     }
 
-    if ($storeJsonFile) $this->storeJson($this->cfg->galFName);
+    if ($storeJsonFile) $this->storeJsonGallery($rez);
 
-    return(json_encode($this->rez));
+    return($rez);
   }
 
   /*
-    Добавляет в массив $this->rez зала $gal и его под залов, если recursive==true
+    Добавляет в массив &$rez зала $gal и его под залов, если recursive==true
   */
-  private function doGrindHall(array $gal) {
-    $gal['path']=GalleryMill::addTrailingSlash(
+  private function doGrindHall(array $gal, array &$rez) {
+    $gal['path']=addTrailingSlash(
       mb_eregi_replace('[\\\/]',DIRECTORY_SEPARATOR,$gal['path'])
     );
 
     // сначала добавляем сам зал
     $gal['subhall']=false;
-    /*if (count($this->rez) ==0)
-      $this->rez[1]=$gal;
-    else
-      $this->rez[]=$gal;*/
-    $this->rez[]=$gal;
+    $rez[]=$gal;
 
     // теперь подзалы, если recursive==true
     if (!$gal['recursive']) return;
@@ -114,7 +92,7 @@ class GalleryMill
     foreach ($iterator as $path=>$obj) {
       if ($obj->isDir()) {
         $ap=explode(DIRECTORY_SEPARATOR,$path);
-        $path=GalleryMill::addTrailingSlash($path);
+        $path=addTrailingSlash($path);
 
         $name='';
         $descr='';
@@ -133,9 +111,10 @@ class GalleryMill
           $thumb=isset($pi['thumb']) ? $pi['thumb'] : '';
         }
 
-        $this->rez[]=[
+        // добавляем подзал
+        $rez[]=[
           'id'=>'subhall-'.end($ap),
-          'name'=>($name=='') ? GalleryMill::delTrailingSlash(mb_substr($path,mb_strlen($gal['path']))) : $name,
+          'name'=>($name=='') ? delTrailingSlash(mb_substr($path,mb_strlen($gal['path']))) : $name,
           'descr'=>$descr,
           'path'=>$path,
           'thumb'=>$thumb,
@@ -146,18 +125,44 @@ class GalleryMill
   }
 
   /*
-    Записываем $this->rez в формате json в файл $fname.json
+    Записываем $rez в формате json в файл {$fname}.json
+    и устанавливает его mtime == mtime(galFName)
   */
-  private function storeJson(string $fname) {
-    //'__gallery.conf.php',
+  private function storeJsonGallery(array &$rez) {
+    $fn=$this->mkJsonFName($this->cfg->galFName);
     file_put_contents(
-      preg_replace('/\.[^.]+$/',
-      '.',$fname)."json",
+      $fn,
       json_encode(
-        $this->rez,
+        $rez,
         JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT
       ) //  | JSON_UNESCAPED_LINE_TERMINATORS
     );
+
+    touch($fn,filemtime($this->cfg->galFName));
+  }
+
+  /*
+    Вернёт имя json-файла списка залов: cfg->galFName.json
+  */
+  public function mkJsonFName(string $fname) {
+    return(preg_replace('/\.[^.]+$/','.',$fname).'json');
+  }
+
+  /*
+    Загружает из json-файла список залов и возваращает в виде массива
+  */
+  public function loadJsonGallery() {
+    $fn=$this->mkJsonFName($this->cfg->galFName);
+
+    if (!file_exists($fn) || filemtime($fn) !==filemtime($this->cfg->galFName)) {
+      $rez=$this->grindGallery(true);
+      $msg='ok. перезаписан.';
+    } else {
+      $rez=json_decode(file_get_contents($fn),JSON_OBJECT_AS_ARRAY);
+      $msg='ok. загружен.';
+    }
+
+    return(array('err'=>0,'msg'=>$msg,'halls'=>$rez));
   }
 
   /*
@@ -180,9 +185,11 @@ class GalleryMill
 
     $rez['params']['name']=(isset($_POST['name'])) ? $_POST['name'] : '';
     $rez['params']['descr']=(isset($_POST['descr'])) ? $_POST['descr'] : '';
-    $rez['params']['ignore']=false;  // !!!
+
+    $rez['params']['ignore']=false;  // fckng sht! ? operator doesnt work with bools!
     if (isset($_POST['ignore']))
       $rez['params']['ignore']=GalleryMill::toBool($_POST['ignore']);
+
     $rez['params']['thumb']=(isset($_POST['thumb'])) ? $_POST['thumb'] : '';
 
     GalleryMill::removeEmptyVals($rez['params']);
@@ -207,31 +214,49 @@ class GalleryMill
       )
     );
 
+    if (file_exists($this->mkJsonFName($this->cfg->galFName)))
+      touch($this->mkJsonFName($this->cfg->galFName));
+
     return(json_encode(['err'=>0,'msg'=>'ok']));
   }
 
   /*
-    Генерирует миниатюру зала
+    Генерирует миниатюру зала.
+
+    В _GET передаются:
+      hi - индекс зала в массиве залов
+      th - имя файла-миниатюры
   */
   public function getHallThumb() {
-    $fn=$_GET['th'];
+    $g=$this->loadJsonGallery();
+    if ($g['err']) {
+      $this->emitNotFound();
+      exit;
+    }
+
+    $idx=$_GET['hi'];
+    $fn=$g['halls'][$idx]['path'].$_GET['th'];
+
     if ($fn==='' || !file_exists($fn)) {
       $this->emitNotFound();
       exit;
     }
-    $dim=getimagesize($fn);
-    $ww=$dim[0]; $hh=$dim[1];
 
+    $dim=getimagesize($fn);
+    $ww=$dim[I_WIDTH]; $hh=$dim[I_HEIGHT];
+
+    // вычисляем размеры будущей миниатюры
     $r1=$ww/thumbSize; $r2=$hh/thumbSize;
     $ratio=$r1 >$r2 ? $r1:$r2;
     if ($ratio <1) $ratio=1;
     $w=intval($ww/$ratio); $h=intval($hh/$ratio);
 
-    switch($dim[2]) {
-      case 1: $img=imagecreatefromgif($fn); break;
-      case 2: $img=imagecreatefromjpeg($fn); break;
-      case 3: $img=imagecreatefrompng($fn); break;
-      default: emitNotFound(); exit;
+    switch($dim[I_TYPE]) {
+      case IMAGETYPE_GIF: $img=imagecreatefromgif($fn); break;
+      case IMAGETYPE_JPEG: $img=imagecreatefromjpeg($fn); break;
+      case IMAGETYPE_PNG: $img=imagecreatefrompng($fn); break;
+      case IMAGETYPE_WEBP: $img=imagecreatefromwebp($fn); break;
+      default: $this->emitNotFound(); exit;
     }
 
     if (!$img) {
@@ -244,11 +269,11 @@ class GalleryMill
 
     imagecopyresampled($thumb,$img,0,0,0,0,$w,$h,$ww,$hh);
 
-    /*if ($dim[2] ==2)
-      $thumb=rotateImage($fn,$thumb,$w,$h);*/
+    if ($dim[I_TYPE] ==IMAGETYPE_JPEG)
+      $thumb=PixUtils::rotateJpegImg($fn,$thumb,$w,$h);
 
-    header('Content-Type: image/jpeg');
-    imagejpeg($thumb,NULL,80);
+    header('Content-Type: image/png');
+    imagepng($thumb);
 
     imagedestroy($thumb);
     imagedestroy($img);
@@ -262,5 +287,37 @@ class GalleryMill
     header('Content-Disposition: attachment; filename="notfound.png"');
     readfile('../img/notFound.png');
   }
-} // --- End of Class GalleriesMill
+
+  /*
+    Вернёт страницу миниатюр для текущего зала.
+    Из cfg используются параметры:
+      hallIdx
+      pgNum
+      thSize
+      perPage
+  */
+  public function createHallThumbs() {
+    $g=$this->loadJsonGallery();
+    // проверяем ошибку при загрузке залов
+    if ($g['err']) return($g);
+
+    $dir=$g['halls'][$this->cfg->hallIdx]['path'];
+    $rez='';
+
+    if ($h=opendir($dir)) {
+      while (($f=readdir($h)) !==false) {
+        if (is_file($dir.$f)) {
+          $ext=strtolower(strrchr($f,'.'));
+          if (in_array($ext,PIX_EXT)) {
+            $rez.='<div class="img-thumb">'.$f.'</div>';
+          }
+        }
+      }
+      closedir($h);
+      return(['err'=>0,'msg'=>'ok','thumbs'=>$rez]);
+    } else {
+      return(['err'=>-1971,'msg'=>MSGS['E_UnableToOpenDir'].$dir]);
+    }
+  }
+} // --- End of Class GalleryMill ---
 ?>
