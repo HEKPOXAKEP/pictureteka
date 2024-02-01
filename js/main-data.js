@@ -11,6 +11,7 @@ const
   _err=console.error;
 
 const
+  _WARN='Предупреждение',
   _ERROR='Ошибка';
 
 var
