@@ -18,5 +18,5 @@ function checkDependencies() {
   if (typeof ToolbarCtrl =='undefined') dep.push('ToolbarCtrl');
 
   if (dep.length >0)
-    alert('Не загружены основные модули:\n\n'+dep.toString()+'\n\nНормальная работа программы невозможна.');
+    alert('Не загружены основные модули:\n\n'+dep.toString()+'\n\nНормальная работа программы под вопросом.');
 }
