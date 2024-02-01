@@ -3,6 +3,8 @@
 */
 class DlgSelectHall
 {
+  hallPathLen=0;
+
   constructor(dlg,opts) {
     this.dlg=dlg;
     this.prepareDlg();
@@ -53,19 +55,18 @@ class DlgSelectHall
       try {
         halls = await resp.json();
         if (halls['err']) {
-          dlgCtrl.showDlg('error',halls['msg'],'Ошибка');
+          dlgCtrl.showDlg('error',halls['msg'],_ERROR);
         } else {
           ok=true;
         }
-        ///_info('got: ', halls); //dbg
       } catch (e) {
-        dlgCtrl.showDlg('error',await r.text(),'Ошибка!');
+        dlgCtrl.showDlg('error',await r.text(),_ERROR);
       }
     }
 
     if (!ok) return false;
 
-    this.fillDlgData(halls);
+    this.fillDlgData(halls['halls']);
   }
 
   /*
@@ -74,7 +75,6 @@ class DlgSelectHall
   fillDlgData(halls) {
     var
       hh=[],
-      hallIdx=app.hallIdx,
       elHalls=document.getElementById('halls-list');
 
     elHalls.tabIndex=-1;
@@ -83,17 +83,18 @@ class DlgSelectHall
     for (let i in halls) hh[i]=halls[i];
 
     hh.forEach((hall,idx) => {
-      elHalls.appendChild(this.createHallElement(hall,idx,hallIdx));
+      if (!hall['subhall']) this.hallPathLen=hall['path'].length;
+      elHalls.appendChild(this.createHallElement(hall,idx));
     });
 
     this.bindEvents();
     elHalls.focus();
   }
 
-  createHallElement(hall,idx,hallIdx) {
+  createHallElement(hall,idx) {
     const
       h=document.createElement('div'),
-      r=this.createHallRadio(idx,hallIdx),
+      r=this.createHallRadio(idx),
       l=this.createHallLabel(hall,idx,r.id),
       d=this.createHallDescr(hall,idx),
       b=this.createHallInfoBtn(idx);
@@ -111,7 +112,7 @@ class DlgSelectHall
     return h;
   }
 
-  createHallRadio(idx,hallIdx) {
+  createHallRadio(idx) {
     var
       r=document.createElement('input');
 
@@ -119,7 +120,7 @@ class DlgSelectHall
     r.type='radio';
     r.name='hall';
     r.value=idx.toString();
-    if (idx ===Number(hallIdx)) r.checked=true;
+    if (idx ===Number(app.hallIdx)) r.checked=true;
 
     return r;
   }
@@ -130,7 +131,15 @@ class DlgSelectHall
 
     l.id='lbl-hall-name-'+idx.toString();
     l.setAttribute('for',forId);
-    if (hall['subhall']) l.classList.add('lbl-subhall');
+    if (hall['subhall']) {
+      l.classList.add('lbl-subhall');
+      l.style.marginLeft=(
+        10+7*hall['path']
+          .substring(this.hallPathLen)
+          .replace('\\', '/')
+          .split('/').filter(Boolean).length
+      ).toString()+'px';
+    }
     l.innerHTML=hall['name'];
 
     return l;
@@ -173,7 +182,8 @@ class DlgSelectHall
     //dimg.addEventListener('load',this.boundLoadThumb);
     if (hall['thumb']) {
       dimg.alt=hall['thumb'];
-      dimg.src='php/GetHallThumb.php?th='+encodeURI(hall['path'] + hall['thumb']);
+      //dimg.src='php/GetHallThumb.php?th='+encodeURI(hall['path'] + hall['thumb']);
+      dimg.src='php/GetHallThumb.php?hi='+idx.toString()+'&th='+encodeURI(hall['thumb']);
     } else {
       dimg.alt='';
       dimg.src='';
@@ -245,12 +255,21 @@ class DlgSelectHall
   } //btnEditInfoClick
 
   btnOkClick(ev) {
-    //dlgCtrl.destroyDlg(this.dlg);
-    dlgCtrl.showDlg(
-      'warn',
-      'Пока не реализовано, сорян. :-)',
-      'Under construction...'
-    );
+    var
+      idx=$('input[name="hall"]:checked').val();
+
+    if (!idx) {
+      dlgCtrl.showDlg(
+        'warn',
+        'Зал не выбран!<br>Пожалуйста, выберите зал или уходите отсюда.&#128073;',
+        _WARN
+      );
+      return;
+    }
+
+    if (idx !=app.hallIdx) app.setHallIdx(idx);
+
+    dlgCtrl.destroyDlg(this.dlg);
   }
 
   btnCancelClick(ev) {
