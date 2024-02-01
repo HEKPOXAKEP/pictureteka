@@ -12,5 +12,6 @@ const MSGS = array(
   'E_UnrecognizedCmd'=>'Нераспознанная команда',
   'E_NoOp'=>'Оперция не указана',
   'E_ParamNotSpecified'=>'Не задан параметр ',
+  'E_UnableToOpenDir'=>'Не удалось получить доступ к ',
 );
 ?>
