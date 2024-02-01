@@ -11,6 +11,8 @@ class App {
     this.initGlobals();
     this.loadVersionInfo();
     this.initToolbar();
+
+    this.showHallThumbs();
   }
 
   /*
@@ -19,9 +21,18 @@ class App {
   initGlobals() {
     this.hallIdx=getCookie('hi');
     if (!this.hallIdx) {
-      this.hallIdx=1;
-      setCookie('hi',1);
+      this.setHallIdx(1);
     }
+  }
+
+  /*
+    Устанавливаем индекс текущего зала
+    и сбрасываем указатель на текущую страницу
+  */
+  setHallIdx(idx) {
+    this.hallIdx=idx;
+    setCookie('hi',1);  // $cfg->hallIdx
+    setCookie('pg',1);  // %cfg->pgNum
   }
 
   /*
@@ -49,5 +60,15 @@ class App {
       'mainToolbar',
       'html/MainToolbar.html','js/MainToolbar.js',
       'mainToolbar');
+  }
+
+  /*
+    Отображает миниатюры текущего зала.
+  */
+  showHallThumbs() {
+    var ht=$.getJSON('php/GetHallThumbs.php',(json) => {
+      $('#mainContent').html(json.thumbs);
+    })
+    //$('#mainContent').html();
   }
 }
